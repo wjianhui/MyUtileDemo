@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">MyUtilesDemo</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    
+    
+    <string name="tab_name_bluetooth">蓝牙</string>
+    <string name="tab_name_image">图片</string>
+    <string name="tab_name_video">视频</string>
+</resources>
