@@ -35,7 +35,12 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
+    //蓝牙
     implementation 'com.inuker.bluetooth:library:1.4.0'
+    //图片加载
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    //原生数据图
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
 
 }

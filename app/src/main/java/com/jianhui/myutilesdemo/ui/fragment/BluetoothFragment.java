@@ -2,19 +2,15 @@ package com.jianhui.myutilesdemo.ui.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.google.android.material.internal.ManufacturerUtils;
 import com.inuker.bluetooth.library.BluetoothClient;
 import com.inuker.bluetooth.library.beacon.Beacon;
-import com.inuker.bluetooth.library.beacon.BeaconItem;
 import com.inuker.bluetooth.library.search.SearchRequest;
 import com.inuker.bluetooth.library.search.SearchResult;
 import com.inuker.bluetooth.library.search.response.SearchResponse;
-import com.inuker.bluetooth.library.utils.BluetoothLog;
 import com.jianhui.myutilesdemo.R;
 
 /**

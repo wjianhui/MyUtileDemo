@@ -32,12 +32,13 @@ public class HomeFragment extends Fragment {
 
 
     private void initView(View root) {
-        mainHomeTabLayout = root.findViewById(R.id.main_home_tabLayout);
         mainHomeViewPager = root.findViewById(R.id.main_home_viewPager);
-
         SectionsPagerAdapter pagerAdapter = new SectionsPagerAdapter(getChildFragmentManager(), getContext());
         mainHomeViewPager.setAdapter(pagerAdapter);
+        mainHomeViewPager.setOffscreenPageLimit(10);
+        mainHomeTabLayout = root.findViewById(R.id.main_home_tabLayout);
         mainHomeTabLayout.setupWithViewPager(mainHomeViewPager);
+        mainHomeTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 
 
     }

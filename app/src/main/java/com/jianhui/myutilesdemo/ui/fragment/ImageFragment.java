@@ -1,7 +1,9 @@
 package com.jianhui.myutilesdemo.ui.fragment;
 
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
+import android.widget.TextView;
 
 import com.jianhui.myutilesdemo.R;
 
@@ -12,6 +14,8 @@ import com.jianhui.myutilesdemo.R;
 public class ImageFragment extends BaseListFragment {
 
     private static final String TAG_LOG = ImageFragment.class.getSimpleName();
+
+    private TextView textToolHtml;
 
 
     public static ImageFragment newInstance(int index) {
@@ -29,6 +33,7 @@ public class ImageFragment extends BaseListFragment {
 
     @Override
     protected void initView(View view) {
+        textToolHtml = view.findViewById(R.id.text_tool_html);
 
     }
 
