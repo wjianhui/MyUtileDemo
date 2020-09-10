@@ -51,6 +51,9 @@ public class ChartPieFragment extends BaseListFragment {
         layoutParams.height = helght;
         chartPie.setLayoutParams(layoutParams);
 
+        //是否允许手势滑动
+        chartPie.setTouchEnabled(false);
+
 
     }
 
@@ -66,9 +69,9 @@ public class ChartPieFragment extends BaseListFragment {
 
         list = new ArrayList<>();
 
-        list.add(new PieEntry(10, "A"));
-        list.add(new PieEntry(20, "B"));
-        list.add(new PieEntry(30, "C"));
+        list.add(new PieEntry(50, "A"));
+        list.add(new PieEntry(80, "B"));
+        list.add(new PieEntry(40, "C"));
         list.add(new PieEntry(10, "D"));
 
         PieDataSet pieDataSet = new PieDataSet(list, "");

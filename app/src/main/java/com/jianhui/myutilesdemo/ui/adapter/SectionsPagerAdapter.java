@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.jianhui.myutilesdemo.R;
 import com.jianhui.myutilesdemo.ui.fragment.BluetoothFragment;
+import com.jianhui.myutilesdemo.ui.fragment.ChartLineFragment;
 import com.jianhui.myutilesdemo.ui.fragment.ChartPieFragment;
 import com.jianhui.myutilesdemo.ui.fragment.ImageFragment;
 import com.jianhui.myutilesdemo.ui.fragment.VideoFragment;
@@ -23,7 +24,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     @StringRes
     private static final int[] TAB_TITLES = new int[]{R.string.tab_name_bluetooth,
-            R.string.tab_name_image, R.string.tab_name_video, R.string.tab_name_chat_pir};
+            R.string.tab_name_image, R.string.tab_name_video, R.string.tab_name_chat_pir, R.string.tab_name_chat_line};
     private final Context mContext;
 
     public SectionsPagerAdapter(@NonNull FragmentManager fm, Context context) {
@@ -40,8 +41,12 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             return ImageFragment.newInstance(position);
         } else if (position == 3) {
             return ChartPieFragment.newInstance(position);
-        } else {
+        } else if (position == 2) {
             return VideoFragment.newInstance(position);
+        } else if (position == 4) {
+            return ChartLineFragment.newInstance(position);
+        } else {
+            return BluetoothFragment.newInstance(position);
         }
     }
 

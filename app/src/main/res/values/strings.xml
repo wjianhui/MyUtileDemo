@@ -9,4 +9,5 @@
     <string name="tab_name_image">图片</string>
     <string name="tab_name_video">视频</string>
     <string name="tab_name_chat_pir">饼状图</string>
+    <string name="tab_name_chat_line">曲线图</string>
 </resources>
