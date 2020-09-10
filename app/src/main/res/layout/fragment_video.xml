@@ -3,12 +3,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+
+    <SurfaceView
+        android:id="@+id/surface_view_video"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_centerInParent="true"
+        android:layout_height="match_parent" />
+
+    <Button
+        android:id="@+id/bu_start_video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
         android:gravity="center"
-        android:text="视频"
+        android:text="开始录制"
+        android:textColor="#000000"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/bu_stop_video"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:text="停止录制"
         android:textColor="#000000"
         android:textSize="20sp" />
 

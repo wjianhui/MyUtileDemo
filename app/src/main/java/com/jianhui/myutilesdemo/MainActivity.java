@@ -1,14 +1,22 @@
 package com.jianhui.myutilesdemo;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.os.Bundle;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.jianhui.myutilesdemo.ui.bean.PermissionBean;
+import com.jianhui.myutilesdemo.ui.utiles.PermissionUtils;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,5 +34,8 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
     }
+
+
+
 
 }

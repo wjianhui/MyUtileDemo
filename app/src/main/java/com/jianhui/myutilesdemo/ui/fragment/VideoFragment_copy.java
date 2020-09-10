@@ -1,12 +1,10 @@
 package com.jianhui.myutilesdemo.ui.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -30,14 +28,23 @@ import java.util.List;
  * 2020/09/03 0003 9:56
  * 备份一份自己写的视频录制功能
  */
-public class VideoFragment extends BaseListFragment implements View.OnClickListener {
+public class VideoFragment_copy extends BaseListFragment implements View.OnClickListener {
 
-    private static final String TAG_LOG = VideoFragment.class.getSimpleName();
+    private static final String TAG_LOG = VideoFragment_copy.class.getSimpleName();
     private SurfaceView surfaceView;
     private Button startVideo;
     private Button stopVideo;
 
     private SurfaceHolder mSurfaceHolder;
+
+
+    //DATA
+    //录像机状态标识
+    private int mRecorderState;
+
+    public static final int STATE_INIT = 0; //开始录制
+    public static final int STATE_RECORDING = 1;//结束录制
+
 
     // 存储文件
     private File mVecordFile;
@@ -48,10 +55,9 @@ public class VideoFragment extends BaseListFragment implements View.OnClickListe
     private Camera.Parameters mParameters;
     private Camera.Size mOptimalSize;
     private List<int[]> mFpsRange;
-    private int displayOrientation;
 
-    public static VideoFragment newInstance(int index) {
-        VideoFragment videoFragment = new VideoFragment();
+    public static VideoFragment_copy newInstance(int index) {
+        VideoFragment_copy videoFragment = new VideoFragment_copy();
         Bundle bundle = new Bundle();
         bundle.putInt(TAG_LOG, index);
         videoFragment.setArguments(bundle);
@@ -80,11 +86,11 @@ public class VideoFragment extends BaseListFragment implements View.OnClickListe
         //配置SurfaceHolder
         mSurfaceHolder = surfaceView.getHolder();
         // 设置Surface不需要维护自己的缓冲区
-//        mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         // 设置分辨率
-//        mSurfaceHolder.setFixedSize(320, 280);
+        mSurfaceHolder.setFixedSize(320, 280);
         // 设置该组件不会让屏幕自动关闭
-//        mSurfaceHolder.setKeepScreenOn(true);
+        mSurfaceHolder.setKeepScreenOn(true);
         //回调接口
         mSurfaceHolder.addCallback(mSurfaceCallBack);
 
@@ -112,6 +118,7 @@ public class VideoFragment extends BaseListFragment implements View.OnClickListe
             }
             mScreenWidth = i1;
             mScreenHeight = i2;
+            setCameraParameters();
 
         }
 
@@ -137,15 +144,21 @@ public class VideoFragment extends BaseListFragment implements View.OnClickListe
             mOptimalSize = getOptimalPreviewSize(mSupportedVideoSizes,
                     mSupportedPreviewSizes, mScreenWidth, mScreenHeight);
             //该方法是获取最佳的预览与摄像尺寸。然后设置预览图像大小
-//            mParameters.setPreviewSize(mOptimalSize.width, mOptimalSize.height); // 设置预览图像大小
-
-            mParameters.setPreviewSize(mSupportedPreviewSizes.get(0).width, mSupportedPreviewSizes.get(0).height);
+            mParameters.setPreviewSize(mOptimalSize.width, mOptimalSize.height); // 设置预览图像大小
 
 
-            displayOrientation = getCameraDisplayOrientation(requireActivity(), Camera.CameraInfo.CAMERA_FACING_FRONT);
-            mCamera.setDisplayOrientation(displayOrientation);
+            mCamera.setDisplayOrientation(getDegree());
+            List<String> focusModes = mParameters.getSupportedFocusModes();
+            if (focusModes.contains("continuous-video")) {
+                mParameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+            }
             mFpsRange = mParameters.getSupportedPreviewFpsRange();
-            mParameters.setFocusMode(getAutoFocus());
+
+            List<String> modes = mParameters.getSupportedFocusModes();
+            if (modes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+                //支持自动聚焦模式
+                mParameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+            }
             //缩短Recording启动时间
             mParameters.setRecordingHint(true);
             //影像稳定能力
@@ -153,59 +166,34 @@ public class VideoFragment extends BaseListFragment implements View.OnClickListe
                 mParameters.setVideoStabilization(true);
 
             mCamera.setParameters(mParameters);// 设置相机参数
-            mCamera.startPreview();// 开始预览
+//            mCamera.startPreview();// 开始预览
 
         } catch (Exception io) {
             io.printStackTrace();
         }
     }
 
-    //自动对焦
-    private String getAutoFocus() {
 
-        Camera.Parameters parameters = mCamera.getParameters();
-        List<String> focusModes = parameters.getSupportedFocusModes();
-        if (((Build.MODEL.startsWith("GT-I950")) || (Build.MODEL.endsWith("SCH-I959")) || (Build.MODEL.endsWith("MEIZU MX3")))
-                && focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-            return Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE;
-        } else if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
-            return Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO;
-        } else {
-            return Camera.Parameters.FOCUS_MODE_FIXED;
-        }
-    }
-
-    //得到摄像旋转角度
-    private int getCameraDisplayOrientation(Activity activity, int cameraId) {
-
-        Camera.CameraInfo info = new Camera.CameraInfo();
-        Camera.getCameraInfo(cameraId, info);
-        int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
-        int degrees = 0;
-        switch (rotation) {
+    private int getDegree() {
+        //获取当前屏幕旋转的角度
+        int rotating = requireActivity().getWindowManager().getDefaultDisplay().getRotation();
+        int degree = 0;//度数
+        //根据手机旋转的角度，来设置surfaceView的显示的角度
+        switch (rotating) {
             case Surface.ROTATION_0:
-                degrees = 0;
+                degree = 90;
                 break;
             case Surface.ROTATION_90:
-                degrees = 90;
+                degree = 0;
                 break;
             case Surface.ROTATION_180:
-                degrees = 180;
+                degree = 270;
                 break;
             case Surface.ROTATION_270:
-                degrees = 270;
+                degree = 180;
                 break;
         }
-
-        int result;
-        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            result = (info.orientation + degrees) % 360;
-            result = (360 - result) % 360;  // compensate the mirror
-        } else {  // back-facing
-            result = (info.orientation - degrees + 360) % 360;
-        }
-
-        return result;
+        return degree;
     }
 
 
@@ -220,8 +208,8 @@ public class VideoFragment extends BaseListFragment implements View.OnClickListe
             releaseCamera();
         }
 
-        if (checkCameraFacing(Camera.CameraInfo.CAMERA_FACING_FRONT)) {
-            mCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
+        if (checkCameraFacing(1)) {
+            mCamera = Camera.open(1);
         } else {
             Toast.makeText(requireContext(), "未发现有可用摄像头", Toast.LENGTH_SHORT).show();
             return;
@@ -239,11 +227,7 @@ public class VideoFragment extends BaseListFragment implements View.OnClickListe
 //            configCameraParams();
 //            setCameraParameters();
             //启动相机预览
-//            mCamera.startPreview();
-
-
-            setCameraParameters();
-
+            mCamera.startPreview();
         } catch (IOException e) {
             //有的手机会因为兼容问题报错，这就需要开发者针对特定机型去做适配了
             Log.d(TAG_LOG, "Error starting camera preview: " + e.getMessage());
@@ -267,6 +251,29 @@ public class VideoFragment extends BaseListFragment implements View.OnClickListe
             }
         }
         return false;
+    }
+
+    /**
+     * 设置摄像头为竖屏
+     */
+    private void configCameraParams() {
+        Camera.Parameters params = mCamera.getParameters();
+        //设置相机的横竖屏(竖屏需要旋转90°)
+        if (this.getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE) {
+            params.set("orientation", "portrait");
+            mCamera.setDisplayOrientation(90);
+        } else {
+            params.set("orientation", "landscape");
+            mCamera.setDisplayOrientation(0);
+        }
+        //设置聚焦模式
+        params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+        //缩短Recording启动时间
+        params.setRecordingHint(true);
+        //影像稳定能力
+        if (params.isVideoStabilizationSupported())
+            params.setVideoStabilization(true);
+        mCamera.setParameters(params);
     }
 
     /**
@@ -365,36 +372,24 @@ public class VideoFragment extends BaseListFragment implements View.OnClickListe
         //设置图像的编码格式
         mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
         //设置立体声
-        mediaRecorder.setAudioChannels(1);
+//        mediaRecorder.setAudioChannels(2);
         //设置最大录像时间 单位：毫秒
-        mediaRecorder.setMaxDuration(60 * 1000);
+//        mediaRecorder.setMaxDuration(60 * 1000);
         //设置最大录制的大小 单位，字节
-        mediaRecorder.setMaxFileSize(60 * 1024 * 1024);
+//        mediaRecorder.setMaxFileSize(1024 * 1024);
         //音频一秒钟包含多少数据位
         CamcorderProfile mProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_480P);
-        mediaRecorder.setAudioEncodingBitRate(22050);
-        //设置码率
-        if (mProfile.videoBitRate > 2 * 1024 * 1024)
-            mediaRecorder.setVideoEncodingBitRate(2 * 1024 * 1024);
-        else
-            mediaRecorder.setVideoEncodingBitRate(1024 * 1024);
+//        mediaRecorder.setAudioEncodingBitRate(44100);
+//        if (mProfile.videoBitRate > 2 * 1024 * 1024)
+//            mediaRecorder.setVideoEncodingBitRate(2 * 1024 * 1024);
+//        else
+//            mediaRecorder.setVideoEncodingBitRate(1024 * 1024);
 //        mediaRecorder.setVideoFrameRate(mProfile.videoFrameRate);
 
-        //设置帧率
-        int mFps = mProfile.videoFrameRate;
-        for (int[] ints : mFpsRange) {
-            if (ints[0] >= 20000) {
-                mFps = ints[0] / 1000;
-                break;
-            }
-
-        }
-        mediaRecorder.setVideoFrameRate(mFps);
-
         //设置选择角度，顺时针方向，因为默认是逆向90度的，这样图像就是正常显示了,这里设置的是观看保存后的视频的角度
-        mediaRecorder.setOrientationHint(displayOrientation);
+        mediaRecorder.setOrientationHint(90);
         //设置录像的分辨率
-        mediaRecorder.setVideoSize(1280, 720);
+//        mediaRecorder.setVideoSize(352, 288);
 
         //设置录像视频输出地址
         mediaRecorder.setOutputFile(currentVideoFilePath);
