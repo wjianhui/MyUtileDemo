@@ -16,6 +16,7 @@ public class ImageFragment extends BaseListFragment {
     private static final String TAG_LOG = ImageFragment.class.getSimpleName();
 
     private TextView textToolHtml;
+    private View progress_circular;
 
 
     public static ImageFragment newInstance(int index) {
@@ -34,6 +35,7 @@ public class ImageFragment extends BaseListFragment {
     @Override
     protected void initView(View view) {
         textToolHtml = view.findViewById(R.id.text_tool_html);
+        progress_circular = view.findViewById(R.id.progress_circular);
 
     }
 

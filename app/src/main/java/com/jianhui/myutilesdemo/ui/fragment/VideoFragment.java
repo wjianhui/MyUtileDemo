@@ -80,11 +80,11 @@ public class VideoFragment extends BaseListFragment implements View.OnClickListe
         //配置SurfaceHolder
         mSurfaceHolder = surfaceView.getHolder();
         // 设置Surface不需要维护自己的缓冲区
-//        mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         // 设置分辨率
-//        mSurfaceHolder.setFixedSize(320, 280);
+        mSurfaceHolder.setFixedSize(320, 280);
         // 设置该组件不会让屏幕自动关闭
-//        mSurfaceHolder.setKeepScreenOn(true);
+        mSurfaceHolder.setKeepScreenOn(true);
         //回调接口
         mSurfaceHolder.addCallback(mSurfaceCallBack);
 
@@ -236,12 +236,6 @@ public class VideoFragment extends BaseListFragment implements View.OnClickListe
             //将相机与SurfaceHolder绑定
             mCamera.setPreviewDisplay(mSurfaceHolder);
             //配置CameraParams
-//            configCameraParams();
-//            setCameraParameters();
-            //启动相机预览
-//            mCamera.startPreview();
-
-
             setCameraParameters();
 
         } catch (IOException e) {
