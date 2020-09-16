@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -14,7 +15,6 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.jianhui.myutilesdemo.R;
 
 import java.util.ArrayList;
@@ -58,36 +58,60 @@ public class ChartLineFragment extends BaseListFragment implements OnChartValueS
 
     private void initLineChart() {
 
-        LineData lineData = generateDataLine(1);
+        LineData lineData = generateDataLine();
 
         lineChart.setOnChartValueSelectedListener(this);
         lineChart.getDescription().setEnabled(false);
         lineChart.setBackgroundColor(Color.WHITE);
+        lineChart.getDescription().setPosition(200, 100);
+        lineChart.getAxisRight().setEnabled(false);
 
-        IndexAxisValueFormatter valueFormatter = new IndexAxisValueFormatter();
+        //图例
+        Legend legend = lineChart.getLegend();
+        legend.setEnabled(false);
+        //图例样式：有圆点，正方形，短线 几种样式
+        legend.setForm(Legend.LegendForm.CIRCLE);
+        // 图例显示的位置：如下2行代码设置图例显示在左下角
+        legend.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+        legend.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        // 图例的排列方式：水平排列和竖直排列2种
+        legend.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        // 图例距离x轴的距离
+        legend.setXEntrySpace(10f);
+        //图例距离y轴的距离
+        legend.setYEntrySpace(10f);
+        //图例的大小
+        legend.setFormSize(7f);
+        // 图例描述文字大小
+        legend.setTextSize(10);
+
+
+        IndexAxisValueFormatter valueFormatter = new IndexAxisValueFormatter(xValuesProcess());
         XAxis xAxis = lineChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-//        xAxis.setTypeface(mTfLight);
         xAxis.setGranularity(1f);
-//        xAxis.setValueFormatter(valueFormatter);
+        xAxis.setYOffset(5);
+        xAxis.setValueFormatter(valueFormatter);
         xAxis.setDrawGridLines(false);
         xAxis.setDrawAxisLine(true);
 
 
         YAxis leftAxis = lineChart.getAxisLeft();
-//        leftAxis.setTypeface(mTf);
         leftAxis.setLabelCount(5, false);
-        leftAxis.setDrawGridLines(false);
+        leftAxis.setDrawGridLines(true);
+        leftAxis.setDrawAxisLine(false);
+        leftAxis.setXOffset(15);
+        leftAxis.setLabelCount(10, false);
         leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
         leftAxis.enableGridDashedLine(5f, 10f, 20f);
 
-        YAxis rightAxis = lineChart.getAxisRight();
+//        YAxis rightAxis = lineChart.getAxisRight();
 //        rightAxis.setTypeface(mTf);
-        rightAxis.setLabelCount(5, false);
-        rightAxis.setDrawGridLines(false);
-        rightAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
-        rightAxis.setDrawAxisLine(true);
-        rightAxis.setEnabled(false);
+//        rightAxis.setLabelCount(5, false);
+//        rightAxis.setDrawGridLines(false);
+//        rightAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+//        rightAxis.setDrawAxisLine(true);
+//        rightAxis.setEnabled(false);
 
         lineChart.setData(lineData);
         lineChart.animateX(750);
@@ -99,20 +123,26 @@ public class ChartLineFragment extends BaseListFragment implements OnChartValueS
      *
      * @return Line data
      */
-    private LineData generateDataLine(int cnt) {
+    private LineData generateDataLine() {
 
         ArrayList<Entry> values1 = new ArrayList<>();
 
-        for (int i = 0; i < 25; i++) {
-            values1.add(new Entry(i, (int) (Math.random() * 50) + 50));
-        }
+        values1.add(new Entry(0, 1));
+        values1.add(new Entry(1, 50));
+        values1.add(new Entry(2, 80));
+        values1.add(new Entry(3, 100));
+        values1.add(new Entry(4, 150));
+        values1.add(new Entry(5, 90));
+        values1.add(new Entry(6, 60));
 
-        LineDataSet d1 = new LineDataSet(values1, "New DataSet " + cnt + ", (1)");
+
+        LineDataSet d1 = new LineDataSet(values1, "");
         d1.setLineWidth(2.5f);
-        d1.setCircleRadius(4.5f);
+        d1.setCircleRadius(2.5f);
         d1.setHighLightColor(Color.rgb(244, 117, 117));
         d1.setDrawValues(false);
-        d1.setMode(LineDataSet.Mode.HORIZONTAL_BEZIER);
+        d1.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+
 
 //        ArrayList<Entry> values2 = new ArrayList<>();
 //        for (int i = 0; i < 12; i++) {
@@ -142,4 +172,33 @@ public class ChartLineFragment extends BaseListFragment implements OnChartValueS
     public void onNothingSelected() {
 
     }
+
+
+    /**
+     * x轴数据处理
+     *
+     * @return x轴数据
+     */
+    private static String[] xValuesProcess() {
+        String[] week = {"周日", "周一", "周二", "周三", "周四", "周五", "周六"};
+
+//        String[] weekValues = new String[7];
+//        Calendar calendar = Calendar.getInstance();
+//        int currentWeek = calendar.get(Calendar.DAY_OF_WEEK);
+//
+//        for (int i = 6; i >= 0; i--) {
+//            weekValues[i] = week[currentWeek - 1];
+//            if (currentWeek == 1) {
+//                currentWeek = 7;
+//            } else {
+//                currentWeek -= 1;
+//            }
+//        }
+//        return weekValues;
+
+        return week;
+
+    }
+
+
 }
