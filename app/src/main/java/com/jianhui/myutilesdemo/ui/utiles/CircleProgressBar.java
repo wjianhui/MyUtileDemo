@@ -8,9 +8,11 @@ import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Chronometer;
 
 import androidx.annotation.Nullable;
 
@@ -49,6 +51,11 @@ public class CircleProgressBar extends View {
     //录制 time
     private long mRecordTime;
 
+    private Chronometer chronometer;
+
+    public void setChronometer(Chronometer chronometer) {
+        this.chronometer = chronometer;
+    }
 
     private Handler mHandler = new Handler() {
         @Override
@@ -57,8 +64,11 @@ public class CircleProgressBar extends View {
             ++mProgressValue;
             postInvalidate();
             //当没有达到最大值时一直绘制
-            if (mProgressValue <= mMaxValue) {
+            if (mProgressValue < mMaxValue) {
+                Log.i("####", "mProgressValue : : " + mProgressValue + "  mMaxValue : : " + mArcValue);
                 mHandler.sendEmptyMessageDelayed(0, 100);
+            } else if (mProgressValue == mMaxValue) {
+                Log.i("####", "mProgressValue : " + mProgressValue + "  mMaxValue : " + mArcValue);
             }
         }
     };
@@ -162,6 +172,7 @@ public class CircleProgressBar extends View {
                 mHandler.sendEmptyMessage(0);
                 //这里可以回调出去表示已经开始录制了
                 //code.....
+
                 break;
             case MotionEvent.ACTION_UP:
                 if (mRecordTime > 0) {
@@ -169,6 +180,7 @@ public class CircleProgressBar extends View {
                     int actualRecordTime = (int) ((System.currentTimeMillis() - mRecordTime) / 1000);
                     //这里回调出去表示已经取消录制了
                     //code.....
+
                 }
                 mHandler.removeMessages(0);
                 mIsStartRecord = false;
